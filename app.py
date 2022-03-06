@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+import models
 
 
 # The app factory function is the main entry point for the application.
 app = Flask(__name__)
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/home', methods=['GET', 'POST'])
 def home():
     if request.method == 'GET':
         return render_template('index.html')
@@ -15,14 +16,15 @@ def home():
         lastname = request.form['lastname']
         email = request.form['email']
         password = request.form['password']
-
-        if username == 'Luis' and lastname == 'Cedillo':
-            return render_template('about.html', message=f'Welcome {name} {lastname}')
+        db_password = models.check_password(username)
+        if password == db_password:
+            message = models.show_name(username)
+            return render_template('about.html', message=message)
         else:
             return render_template('index.html', message='Invalid credentials!')
 
 
-@app.route('/about', methods=['GET'])
+@ app.route('/about', methods=['GET'])
 def about():
     return render_template('about.html')
 
